@@ -1,0 +1,492 @@
+<Window x:Class="LionRiver.MainWindow"
+        x:Name="MainWnd"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:LionRiver"
+        xmlns:p="clr-namespace:LionRiver.Properties"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:my="clr-namespace:LionRiver"
+                
+        Title="LionRiver"
+        Width="{Binding Source={x:Static p:Settings.Default}, Path=Width, Mode=TwoWay}" 
+        Height="{Binding Source={x:Static p:Settings.Default}, Path=Height, Mode=TwoWay}" 
+        Left="{Binding Source={x:Static p:Settings.Default}, Path=Left, Mode=TwoWay}" 
+        Top="{Binding Source={x:Static p:Settings.Default}, Path=Top, Mode=TwoWay}"
+        WindowState="{Binding Source={x:Static p:Settings.Default}, Path=WindowState, Mode=TwoWay}"
+        Foreground="{x:Null}" Background="{x:Null}"  ResizeMode="CanResize" ShowInTaskbar="True" WindowStyle="SingleBorderWindow" Icon="/LionRiver;component/Images/redhat_starthere.ico" 
+        Closing="Window_Closing" StateChanged="MainWnd_StateChanged">
+
+    <Window.Resources>
+        <local:Inst x:Key="InstrumentData"></local:Inst>
+        <local:SampleItemCollection x:Key="BoatsItemCollection"/>
+        <local:SampleItemCollection x:Key="LegsItemCollection"/>
+
+        <Style x:Key="BoatItemStyle" TargetType="map:MapItem">
+            <Setter Property="map:MapPanel.Location" Value="{Binding Location}"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Padding" Value="3"/>
+            <Setter Property="Background" Value="White"/>
+            <EventSetter Event="MouseEnter" Handler="BoatItem_OnMouseEnter"></EventSetter>
+            <EventSetter Event="MouseLeave" Handler="BoatItem_OnMouseLeave"></EventSetter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="map:MapItem">
+                        <Canvas>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="Disabled"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="BoatColor" Storyboard.TargetProperty="Color" To="LimeGreen" Duration="0:0:0.1"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="SelectionStates">
+                                    <VisualState x:Name="Unselected"/>
+                                    <VisualState x:Name="Selected"/>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CurrentStates">
+                                    <VisualState x:Name="NotCurrent"/>
+                                    <VisualState x:Name="Current"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Polyline 
+                              Points="-7,0,  -5,-11, 0,-21, 5,-11, 7,0, 7,11, 5,18,   -5,18,  -7,11,  -7,0">
+                                <Polyline.Fill>
+                                    <SolidColorBrush x:Name="BoatColor" Color="Yellow" Opacity="0.5"/>
+                                </Polyline.Fill>
+                                <Polyline.RenderTransform>
+                                    <RotateTransform Angle="{Binding Heading}" />
+                                </Polyline.RenderTransform>
+                            </Polyline>
+                            <Polyline StrokeThickness="2" StrokeDashArray="3 3" Visibility="{Binding HeadingVisible}">
+                                <Polyline.Stroke>
+                                    <SolidColorBrush Color="#FF0097FF" />
+                                </Polyline.Stroke>
+                                <Polyline.Points>
+                                    <Point X="0" Y="0" ></Point>
+                                    <Point X="0" Y="-1000"></Point>
+                                </Polyline.Points>
+                                <Polyline.RenderTransform>
+                                    <RotateTransform Angle="{Binding Course}" />
+                                </Polyline.RenderTransform>
+                            </Polyline>
+                        </Canvas>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="LegItemStyle" TargetType="map:MapItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="map:MapItem">
+                        <map:MapPolyline Locations="{Binding Locations}" Stroke="Red" StrokeThickness="3"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="MarkItemStyle" TargetType="my:MarkItem">
+            <Setter Property="map:MapPanel.Location" Value="{Binding Location}"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <EventSetter Event="MouseEnter" Handler="MarkItem_OnMouseEnter"></EventSetter>
+            <EventSetter Event="MouseLeave" Handler="MarkItem_OnMouseLeave"></EventSetter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="my:MarkItem">
+                        <Canvas>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="Disabled"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="selectedPath" Storyboard.TargetProperty="Opacity" To="0.3" Duration="0:0:0.1"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="SelectionStates">
+                                    <VisualState x:Name="Unselected"/>
+                                    <VisualState x:Name="Selected"/>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CurrentStates">
+                                    <VisualState x:Name="NotCurrent"/>
+                                    <VisualState x:Name="Current">
+                                        <Storyboard RepeatBehavior="Forever">
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="Color"
+                                                                          Storyboard.TargetName="labelBackground" AutoReverse="True">
+                                                <ColorAnimationUsingKeyFrames.KeyFrames>
+                                                    <DiscreteColorKeyFrame KeyTime="0:0:0" Value="LimeGreen"/>
+                                                    <DiscreteColorKeyFrame KeyTime="0:0:0.5" Value="Transparent"/>
+                                                    <DiscreteColorKeyFrame KeyTime="0:0:1" Value="LimeGreen"/>
+                                                </ColorAnimationUsingKeyFrames.KeyFrames>
+                                            </ColorAnimationUsingKeyFrames>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="Color"
+                                                                          Storyboard.TargetName="labelForeground" AutoReverse="True">
+                                                <ColorAnimationUsingKeyFrames.KeyFrames>
+                                                    <DiscreteColorKeyFrame KeyTime="0:0:0" Value="Black"/>
+                                                    <DiscreteColorKeyFrame KeyTime="0:0:0.5" Value="White"/>
+                                                    <DiscreteColorKeyFrame KeyTime="0:0:1" Value="Black"/>
+                                                </ColorAnimationUsingKeyFrames.KeyFrames>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Path Name="selectedPath" Fill="GreenYellow" Opacity="0">
+                                <Path.Data>
+                                    <EllipseGeometry RadiusX="20" RadiusY="20"/>
+                                </Path.Data>
+                            </Path>
+                            <Path Name="path" StrokeThickness="2" Fill="Transparent">
+                                <Path.Stroke>
+                                    <SolidColorBrush Color="Yellow"/>
+                                </Path.Stroke>
+                                <Path.Data>
+                                    <EllipseGeometry RadiusX="5" RadiusY="5"/>
+                                </Path.Data>
+                            </Path>
+                            <Grid Canvas.Left="15" Canvas.Top="-8">
+                                <Rectangle>
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush x:Name="labelBackground"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <TextBlock Margin="2,0,2,0" Text="{Binding Name}">
+                                    <TextBlock.Foreground>
+                                        <SolidColorBrush x:Name="labelForeground" Color="White"/>
+                                    </TextBlock.Foreground>
+                                </TextBlock>
+                            </Grid>
+                        </Canvas>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ContextMenu  x:Key="MarkContextMenu_Standard">
+            <MenuItem Header="Navigate To" Command="local:CommandLibrary.NavigateTo" CommandParameter="{Binding Parent.PlacementTarget.SelectedItem, RelativeSource={RelativeSource Self}}"/>
+            <MenuItem Header="Move" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" Click="MoveMark"/>
+            <MenuItem Header="Delete" Command="local:CommandLibrary.DeleteMark" CommandParameter="{Binding Parent.PlacementTarget.SelectedItem, RelativeSource={RelativeSource Self}}"/>
+        </ContextMenu>
+
+        <ContextMenu x:Key="ContextMenu_CreatingRoute">
+            <MenuItem Header="Create Route" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" Click="CreateRoute"/>
+            <MenuItem Header="Cancel" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" Click="CancelCreateRoute"/>
+        </ContextMenu>
+
+        <ContextMenu x:Key="LegContextMenu">
+            <MenuItem Header="Insert Mark" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" Click="LegInsertMark"/>
+        </ContextMenu>
+
+        <ContextMenu x:Key="MapContextMenu_Standard">
+            <MenuItem Header="Add Mark"
+                                      Command="local:CommandLibrary.AddMark"
+                                      CommandTarget="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                      CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+        </ContextMenu>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="{Binding Source={x:Static p:Settings.Default}, Path=RowWidth1, Mode=TwoWay}" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!--</Grid>-->
+        <ToolBarPanel Height="Auto" HorizontalAlignment="Stretch" Margin="0" x:Name="MainMenuPanel" VerticalAlignment="Stretch" Width="Auto">
+            <Menu Height="23" x:Name="menu1" Width="Auto">
+                <MenuItem Header="File">
+                    <MenuItem Header="Load Waypoint/Route" Click="GPXLoadButton_Click" />
+                    <MenuItem Header="Load Polar" Click="MenuItem_Polar_Click" />
+                    <MenuItem Header="Load Wind Grib" Click="GribWindLoadButton_Click" />
+                    <MenuItem Header="Load Current Grib" Click="GribCurrentLoadButton_Click"/>
+                    <MenuItem Header="Replay Log" Click="ReplayLogButton_Click"/>
+                    <Separator />
+                    <MenuItem Header="Save Waypoint/Route" Click="MenuItem_SaveWaypoint_Click"/>
+                    <MenuItem Header="Save Track" />
+                    <Separator/>
+                    <MenuItem Name="RawLogFile_MenuItem" Header="Log Raw Data" IsCheckable="True" Checked="RawLogFile_MenuItem_Checked" Unchecked="RawLogFile_MenuItem_Unchecked"/>
+                    <Separator/>                    
+                    <MenuItem Header="Setup" Click="MenuItem_Setup_Click"/>
+                </MenuItem>
+                <MenuItem Header="Course" >
+                    <MenuItem Header="Windward-Leeward" Click="MenuItem_WLCourseSetup_Click"  />
+                </MenuItem>
+            </Menu>
+        </ToolBarPanel>
+        <Grid Height="Auto" x:Name="InstrumentsGrid" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90*" />
+                <ColumnDefinition Width="10*" />
+            </Grid.ColumnDefinitions>
+            <TabControl Height="Auto" HorizontalAlignment="Stretch" Margin="0" x:Name="InstrumentTabControl" VerticalAlignment="Stretch" Width="Auto" TabStripPlacement="Left" Background="{x:Null}" BorderThickness="0">
+                <TabItem Header="Nav 1" x:Name="tabItem1" Margin="0" Padding="0" FontSize="10">
+                    <Grid Grid.Row="0" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" x:Name="gridA" VerticalAlignment="Stretch" Width="Auto">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="17*" />
+                            <ColumnDefinition Width="17*" />
+                            <ColumnDefinition Width="17*" />
+                            <ColumnDefinition Width="17*" />
+                            <ColumnDefinition Width="17*" />
+                            <ColumnDefinition Width="17*" />
+                        </Grid.ColumnDefinitions>
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="0" x:Name="userControl11" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="1" x:Name="userControl12" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="2" x:Name="userControl13" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="4" x:Name="userControl15" VerticalAlignment="Stretch" />
+                        <my:UserControl1 Grid.Column="3" HorizontalAlignment="Stretch" Margin="0" x:Name="userControl14" VerticalAlignment="Stretch" />
+                        <my:UserControl1 Grid.Column="5" HorizontalAlignment="Stretch" Margin="0" x:Name="userControl16" VerticalAlignment="Stretch" />
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Nav 2" x:Name="tabItem2" Padding="0" FontSize="10">
+                    <Grid Grid.Row="0" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" x:Name="gridB" VerticalAlignment="Stretch" Width="Auto">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="0" x:Name="userControl17" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="1" x:Name="userControl18" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="2" x:Name="userControl19" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="3" x:Name="userControl20" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="4" x:Name="userControl21" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="5" x:Name="userControl22" VerticalAlignment="Stretch" />
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Nav 3" x:Name="tabItem3" Padding="0" FontSize="10" Margin="0">
+                    <Grid Grid.Row="0" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" x:Name="gridC" VerticalAlignment="Stretch" Width="Auto">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="0" x:Name="userControl23" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="1" x:Name="userControl24" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="2" x:Name="userControl25" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="3" x:Name="userControl26" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="4" x:Name="userControl27" VerticalAlignment="Stretch" />
+                        <my:UserControl1 HorizontalAlignment="Stretch" Margin="0" Grid.Column="5" x:Name="userControl28" VerticalAlignment="Stretch" />
+                    </Grid>
+                </TabItem>
+
+            </TabControl>
+            <Grid Grid.Column="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" x:Name="CommStatusGrid" VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="17" />
+                    <RowDefinition Height="36*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" x:Name="grid6" VerticalAlignment="Stretch" Width="Auto">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Background="LightGray" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="4" Grid.ColumnSpan="1" Height="Auto" HorizontalAlignment="Stretch" Margin="1,2,1,1" x:Name="borderPort1" VerticalAlignment="Stretch" Width="Auto" Padding="0">
+                        <Label Background="{x:Null}" Content="1" FontSize="7" Height="Auto" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="0" />
+                    </Border>
+                    <Border Grid.Column="1" Background="LightGray" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="4" Grid.ColumnSpan="1" Height="Auto" HorizontalAlignment="Stretch" Margin="1,2,1,1" x:Name="borderPort2" VerticalAlignment="Stretch" Width="Auto" Padding="0">
+                        <Label Background="{x:Null}" Content="2" FontSize="7" Height="Auto" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Padding="0" Margin="0" />
+                    </Border>
+                    <Border Grid.Column="2" Background="LightGray" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="4" Grid.ColumnSpan="1" Height="Auto" HorizontalAlignment="Stretch" Margin="1,2,1,1" x:Name="borderPort3" VerticalAlignment="Stretch" Width="Auto" Padding="0">
+                        <Label Background="{x:Null}" Content="3" FontSize="7" Height="Auto" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Padding="0" Margin="0" />
+                    </Border>
+                    <Border Grid.Column="3" Background="LightGray" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="4" Grid.ColumnSpan="1" Height="Auto" HorizontalAlignment="Stretch" Margin="1,2,1,1" x:Name="borderPort4" VerticalAlignment="Stretch" Width="Auto" Padding="0">
+                        <Label Background="{x:Null}" Content="4" FontSize="7" Height="Auto" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Padding="0" Margin="0" />
+                    </Border>
+
+                </Grid>
+                <Border Background="{x:Null}" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="4" Grid.Row="1"  Height="Auto" HorizontalAlignment="Stretch" Margin="0,0,1,2" x:Name="border4" VerticalAlignment="Stretch" Width="Auto">
+                    <Viewbox Height="Auto" Width="Auto" Margin="2">
+                        <Grid Height="Auto" x:Name="LatLonGrid" Width="Auto" MouseDown="LatLonGrid_MouseDown">
+                            <Grid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem x:Name="ContextMenuMOBClear" Header="Clear MOB"  IsEnabled="False" Click="ContextMenuMOBClear_Click"/>
+                                </ContextMenu>
+                            </Grid.ContextMenu>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" x:Name="TextBlock1" Foreground="White" Text="{Binding FormattedValue}"/>
+                            <TextBlock Grid.Row="1" x:Name="TextBlock2" Foreground="White" Text="{Binding FormattedValue}"/>
+                        </Grid>
+                    </Viewbox>
+                </Border>
+
+            </Grid>
+        </Grid>
+        <Grid  Height="Auto" HorizontalAlignment="Stretch" Margin="0" x:Name="ChartingGrid" VerticalAlignment="Stretch" Width="Auto" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{Binding ColumnWidth1, Mode=TwoWay, Source={x:Static p:Settings.Default}}"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid x:Name="MapGrid">
+
+                <!--<TextBlock Text="{Binding ElementName=map, Path=ZoomLevel}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="White" Background="Black" Panel.ZIndex="1000" />-->
+
+                <map:Map x:Name="map" IsManipulationEnabled="True"                         
+        			Center="-34.5,-58.5" ZoomLevel="10" MaxZoomLevel="20"
+        			ManipulationInertiaStarting="MapManipulationInertiaStarting"
+                         
+                         MouseLeftButtonUp="MapMouseLeftButtonUp"    
+                         MouseLeftButtonDown="MapMouseLeftButtonDown"
+                         MouseRightButtonDown="MapMouseRightButtonDown"
+                         MouseMove="MapMouseMove"
+
+                         ContextMenu="{StaticResource MapContextMenu_Standard}">
+
+                    <!--<map:MapGraticule Opacity="0.3"/>
+                    <map:MapScale Margin="4" Opacity="1"/>-->
+
+                    <map:MapItemsControl ItemsSource="{StaticResource BoatsItemCollection}"
+                                             ItemContainerStyle="{StaticResource BoatItemStyle}"
+                                             SelectionMode="Single"
+                                             Panel.ZIndex="20"
+                                             PreviewMouseLeftButtonDown="Boat_PreviewMouseLeftButtonDown"
+                                             PreviewMouseLeftButtonUp="Boat_PreviewMouseLeftButtonUp"/>
+
+                    <map:MapItemsControl  x:Name="LegItemsControl" ItemsSource="{StaticResource LegsItemCollection}"        				
+                                              ItemContainerStyle="{StaticResource LegItemStyle}"                        
+                                              ContextMenu="{StaticResource LegContextMenu}"
+                                              Panel.ZIndex="10"/>
+
+                    <local:MarkItemsControl x:Name="markItemsControl" ItemsSource="{Binding}"
+                                                ItemContainerStyle="{StaticResource MarkItemStyle}" 
+                                                SelectionMode="Single"
+                                                ActiveItem="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}},Path=ActiveMark}"
+                                                                         
+                                                PreviewMouseLeftButtonDown="Mark_PreviewMouseLeftButtonDown"                         
+                                                PreviewMouseLeftButtonUp="Mark_PreviewMouseLeftButtonUp"                         
+                                                PreviewMouseMove="Mark_PreviewMouseMove"
+                                                
+                                                ContextMenu="{StaticResource MarkContextMenu_Standard}"
+                                                Panel.ZIndex="30">
+                    </local:MarkItemsControl>
+
+                    <local:MeasureControl x:Name="mapMeasureControl" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50,50,0,50" Visibility="Hidden"/>
+                    <local:RouteReplayControl x:Name="mapRouteReplayControl" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50,50,0,50" Visibility="Hidden" Panel.ZIndex="40"/>
+
+                </map:Map>
+
+                <DockPanel Height="Auto" HorizontalAlignment="Stretch" Margin="5,5,5,0" x:Name="MapToolbarPanel" VerticalAlignment="Top" Width="Auto" Panel.ZIndex="1" LastChildFill="False" Background="{x:Null}">
+
+                    <!--<Border  Margin="2" Background="#FF949792"  CornerRadius="3" Padding="2" >
+                            <Image Source="Images/Maps-and-Geolocation-Define-location-icon.png" Stretch="None"/>
+                    </Border>-->
+
+                    <ToggleButton  Name="CenterButton" Checked="CenterButton_Checked" Unchecked="CenterButton_Unchecked"  Style="{StaticResource MainToggleButton}" Margin="2">
+                        <ToggleButton.Content>
+                            <Image Source="Images/Maps-and-Geolocation-Street-view-icon.png" Stretch="None" HorizontalAlignment="Center"  Margin="2" ToolTip="Center on boat"/>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+
+                    <ToggleButton  Name="OrientationButton" Unchecked="OrientationButton_Unchecked" Checked="OrientationButton_Checked" Style="{StaticResource MainToggleButton}"  Margin="2" >
+                        <ToggleButton.Content>
+                            <Image Source="Images/City-Gps-device-icon.png" Stretch="None" Margin="2" ToolTip="Course Up"/>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+
+                    <ToggleButton  Name="MarkButton" Checked="MarkButton_Checked" Unchecked="MarkButton_Unchecked" Style="{StaticResource MainToggleButton}" Margin="2" >
+                        <ToggleButton.Content>
+                            <Image Source="Images/Maps-and-Geolocation-Marker-icon.png" Stretch="None" Margin="2" ToolTip="Marks"/>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+
+                    <ToggleButton  Name="RouteButton" Checked="RouteButton_Checked" Unchecked="RouteButton_Unchecked" Style="{StaticResource MainToggleButton}" Margin="2" >
+                        <ToggleButton.Content>
+                                <Image Source="Images/Maps-and-Geolocation-Polyline-icon.png" Stretch="None" Margin="2" ToolTip="Routes"/>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+
+                    <ToggleButton  Name="MeasureButton" Style="{StaticResource MainToggleButton}" Margin="2" Checked="MeasureButton_Checked" Unchecked="MeasureButton_Unchecked" >
+                        <ToggleButton.Content>
+                            <Image Source="Images/Very-Basic-Ruler-icon.png" Stretch="None" Margin="2" ToolTip="Measure"/>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+                    
+                    <ToggleButton  Name="RouteCalcButton"  Style="{StaticResource MainToggleButton}" Margin="2" DockPanel.Dock="Right" Checked="RouteCalcButton_Checked" Unchecked="RouteCalcButton_Unchecked"  >
+                        <ToggleButton.Content>
+                            <Image Source="Images/Numbers-2-icon.png" Stretch="None" Margin="2" ToolTip="Route Calculation"/>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+                    
+                    <ToggleButton  Name="GribButton"  Style="{StaticResource MainToggleButton}" Margin="2" DockPanel.Dock="Right" Checked="GribButton_Checked" Unchecked="GribButton_Unchecked"  >
+                        <ToggleButton.Content>
+                            <Image Source="Images/Weather-Partly-cloudy-day-icon.png" Stretch="None" Margin="2" ToolTip="Grib"/>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+
+                    <ToggleButton  Name="LayersButton"  Style="{StaticResource MainToggleButton}" Margin="2" DockPanel.Dock="Right" Checked="LayersButton_Checked" Unchecked="LayersButton_Unchecked" >
+                        <ToggleButton.Content>
+                            <Image Source="Images/Maps-and-Geolocation-Layers-icon.png" Stretch="None" Margin="2" ToolTip="Layers"/>
+                        </ToggleButton.Content>
+                    </ToggleButton>
+
+                </DockPanel>
+
+                <Slider x:Name="ZoomSlider" Grid.RowSpan="2" Panel.ZIndex="6" Orientation="Vertical" VerticalAlignment="Center" Width="Auto" Height="77" HorizontalAlignment="Right" 
+        			TickPlacement="TopLeft" 
+        			Minimum="{Binding MinZoomLevel, ElementName=map}"
+        			Maximum="{Binding MaxZoomLevel, ElementName=map}"
+        			Value="{Binding TargetZoomLevel, ElementName=map}"/>
+
+            </Grid>
+
+            <Grid x:Name="AuxGrid"  Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid x:Name="AuxToolbarGrid" Grid.Row="0" >
+                    <DockPanel Height="Auto" HorizontalAlignment="Stretch" Margin="5,5,5,0" VerticalAlignment="Top" Width="Auto" Panel.ZIndex="3" LastChildFill="False" Background="{x:Null}">
+                        <DockPanel.Resources>
+                            <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource {x:Type ToggleButton}}"/>
+                        </DockPanel.Resources>
+
+                        <ComboBox x:Name="ChartComboBox" Width="66" DockPanel.Dock="Right">
+                            <ComboBoxItem x:Name="ChartComboBoxTWD" Content="TWD" Selected="ChartComboBoxTWD_Selected"/>
+                            <ComboBoxItem x:Name="ChartComboBoxTWS" Content="TWS" Selected="ChartComboBoxTWS_Selected" />
+                            <ComboBoxItem x:Name="ChartComboBoxVMG" Content="VMG" Selected="ChartComboBoxVMG_Selected"/>
+                            <ComboBoxItem x:Name="ChartComboBoxSOG" Content="SOG" Selected="ChartComboBoxSOG_Selected"/>
+                            <ComboBoxItem x:Name="ChartComboBoxSPD" Content="SPD" Selected="ChartComboBoxSPD_Selected" />
+                            <ComboBoxItem x:Name="ChartComboBoxDPT" Content="Depth" Selected="ChartComboBoxDPT_Selected" />
+                            <ComboBoxItem x:Name="ChartComboBoxTEMP" Content="Temp" Selected="ChartComboBoxTEMP_Selected"  />
+                            <ComboBoxItem x:Name="ChartComboBoxDRIFT" Content="Drift" Selected="ChartComboBoxDRIFT_Selected"  />
+                            <ComboBoxItem x:Name="ChartComboBoxSET" Content="Set" Selected="ChartComboBoxSET_Selected"  />
+                            <ComboBoxItem x:Name="ChartComboBoxPERF" Content="Perf" Selected="ChartComboBoxPERF_Selected"   />
+                        </ComboBox>
+                        
+                    </DockPanel>
+                </Grid>
+                <Grid  Grid.Row="1"  Height="Auto" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" Width="Auto">
+                    <local:ChartingControl x:Name="chartingControl" MouseWheel="chartingControl_MouseWheel"/>
+                </Grid>
+            </Grid>
+            <GridSplitter Grid.Column="1" Height="Auto" HorizontalAlignment="Left" Margin="0" x:Name="gridSplitter1" VerticalAlignment="Stretch" Width="6" ResizeBehavior="PreviousAndNext" Background="Black" ShowsPreview="False"/>
+
+        </Grid>
+        <GridSplitter Grid.Row="2" Grid.RowSpan="1" Height="6" HorizontalAlignment="Stretch" Margin="0" x:Name="gridSplitter2" VerticalAlignment="Stretch" Width="Auto" ResizeBehavior="PreviousAndNext" ResizeDirection="Rows" Background="Black" />
+    </Grid>
+
+</Window>

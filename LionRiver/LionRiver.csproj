@@ -1,0 +1,460 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{620D51CE-DA2D-4A13-9C45-046A3ADBF883}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LionRiver</RootNamespace>
+    <AssemblyName>LionRiver</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>C:\Users\fsaux\Desktop\LR\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>52</ApplicationRevision>
+    <ApplicationVersion>2.1.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>680382F7301888B00C8E5F3793C61A7A74808BE4</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>LionRiver_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Images\redhat_starthere.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="gdalconst_csharp, Version=1.0.4551.38343, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\GDAL\bin\gdal\csharp\gdalconst_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gdal_csharp, Version=1.0.4551.38342, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\GDAL\bin\gdal\csharp\gdal_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ogr_csharp, Version=1.0.4551.38342, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\GDAL\bin\gdal\csharp\ogr_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="osr_csharp, Version=1.0.4551.38342, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\GDAL\bin\gdal\csharp\osr_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="ReachFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Windows.Controls.DataVisualization.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=2.6.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.6\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="ChartingControl.xaml.cs">
+      <DependentUpon>ChartingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Comm.cs" />
+    <Compile Include="DisplayControl1.xaml.cs">
+      <DependentUpon>DisplayControl1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DisplayrControl2.xaml.cs">
+      <DependentUpon>DisplayrControl2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Classes.cs" />
+    <Compile Include="GribControl.xaml.cs">
+      <DependentUpon>GribControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LayerControlWindow.xaml.cs">
+      <DependentUpon>LayerControlWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MarkControlWindow.xaml.cs">
+      <DependentUpon>MarkControlWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RouteReplayControl.xaml.cs">
+      <DependentUpon>RouteReplayControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MeasureControl.xaml.cs">
+      <DependentUpon>MeasureControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RouteControlWindow.xaml.cs">
+      <DependentUpon>RouteControlWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RoutingCalculation.xaml.cs">
+      <DependentUpon>RoutingCalculation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
+    <Compile Include="SetupWindow.xaml.cs">
+      <DependentUpon>SetupWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LogCommentDlg.xaml.cs">
+      <DependentUpon>LogCommentDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StartUpWindow.xaml.cs">
+      <DependentUpon>StartUpWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WLCourseSetupWindow.xaml.cs">
+      <DependentUpon>WLCourseSetupWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="ChartingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GribControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Images\Dictionary1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LayerControlWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="DisplayControl1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DisplayrControl2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MarkControlWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RouteReplayControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MeasureControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RouteControlWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RoutingCalculation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SetupWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LogCommentDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StartUpWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WLCourseSetupWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Nav.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="GDAL\gdal-data\compdcs.csv" />
+    <None Include="GDAL\gdal-data\coordinate_axis.csv" />
+    <None Include="GDAL\gdal-data\cubewerx_extra.wkt" />
+    <None Include="GDAL\gdal-data\datum_shift.csv" />
+    <None Include="GDAL\gdal-data\ecw_cs.wkt" />
+    <None Include="GDAL\gdal-data\ellipsoid.csv" />
+    <None Include="GDAL\gdal-data\epsg.wkt" />
+    <None Include="GDAL\gdal-data\esri_extra.wkt" />
+    <None Include="GDAL\gdal-data\esri_StatePlane_extra.wkt" />
+    <None Include="GDAL\gdal-data\esri_Wisconsin_extra.wkt" />
+    <None Include="GDAL\gdal-data\gcs.csv" />
+    <None Include="GDAL\gdal-data\gcs.override.csv" />
+    <None Include="GDAL\gdal-data\gdal_datum.csv" />
+    <None Include="GDAL\gdal-data\geoccs.csv" />
+    <None Include="GDAL\gdal-data\gt_datum.csv" />
+    <None Include="GDAL\gdal-data\gt_ellips.csv" />
+    <None Include="GDAL\gdal-data\header.dxf" />
+    <None Include="GDAL\gdal-data\nitf_spec.xsd" />
+    <None Include="GDAL\gdal-data\pcs.csv" />
+    <None Include="GDAL\gdal-data\pcs.override.csv" />
+    <None Include="GDAL\gdal-data\prime_meridian.csv" />
+    <None Include="GDAL\gdal-data\projop_wparm.csv" />
+    <None Include="GDAL\gdal-data\s57agencies.csv" />
+    <None Include="GDAL\gdal-data\s57attributes.csv" />
+    <None Include="GDAL\gdal-data\s57attributes_aml.csv" />
+    <None Include="GDAL\gdal-data\s57attributes_iw.csv" />
+    <None Include="GDAL\gdal-data\s57expectedinput.csv" />
+    <None Include="GDAL\gdal-data\s57objectclasses.csv" />
+    <None Include="GDAL\gdal-data\s57objectclasses_aml.csv" />
+    <None Include="GDAL\gdal-data\s57objectclasses_iw.csv" />
+    <None Include="GDAL\gdal-data\seed_2d.dgn" />
+    <None Include="GDAL\gdal-data\seed_3d.dgn" />
+    <None Include="GDAL\gdal-data\stateplane.csv" />
+    <None Include="GDAL\gdal-data\trailer.dxf" />
+    <None Include="GDAL\gdal-data\unit_of_measure.csv" />
+    <None Include="GDAL\gdal-data\vertcs.csv" />
+    <None Include="GDAL\gdal-data\vertcs.override.csv" />
+    <None Include="LionRiver_TemporaryKey.pfx" />
+    <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\redhat_starthere.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Maps-and-Geolocation-Empty-flag-icon.png" />
+    <Resource Include="Images\Maps-and-Geolocation-Define-location-icon.png" />
+    <Resource Include="Images\Close-icon %281%29.png" />
+    <Resource Include="Images\Image-Edition-Tools-Collapse-icon.png" />
+    <Resource Include="Images\Arrows-Up-icon.png" />
+    <Content Include="GDAL\cairo.dll" />
+    <Content Include="GDAL\cfitsio.dll" />
+    <Content Include="GDAL\freexl.dll" />
+    <Content Include="GDAL\fribidi.dll" />
+    <Content Include="GDAL\ftgl.dll" />
+    <Resource Include="GDAL\gdal-data\gdalicon.png" />
+    <Content Include="GDAL\gdal-data\GDALLogoBW.svg" />
+    <Content Include="GDAL\gdal-data\GDALLogoColor.svg" />
+    <Content Include="GDAL\gdal-data\GDALLogoGS.svg" />
+    <Resource Include="GDAL\gdal-data\nitf_spec.xml" />
+    <Resource Include="GDAL\gdal-data\pci_datum.txt" />
+    <Resource Include="GDAL\gdal-data\pci_ellips.txt" />
+    <Content Include="GDAL\gdal19.dll" />
+    <Content Include="GDAL\gdalconst_wrap.dll" />
+    <Content Include="GDAL\gdal_wrap.dll" />
+    <Content Include="GDAL\geos_c.dll" />
+    <Content Include="GDAL\hdf5dll.dll" />
+    <Content Include="GDAL\iconv.dll" />
+    <Content Include="GDAL\libcurl.dll" />
+    <Content Include="GDAL\libeay32.dll" />
+    <Content Include="GDAL\libecwj2.dll" />
+    <Content Include="GDAL\libexpat.dll" />
+    <Content Include="GDAL\libfcgi.dll" />
+    <Content Include="GDAL\libmap.dll" />
+    <Content Include="GDAL\libmysql.dll" />
+    <Content Include="GDAL\libpq.dll" />
+    <Content Include="GDAL\libtiff.dll" />
+    <Content Include="GDAL\libxml2.dll" />
+    <Content Include="GDAL\lti_dsdk.dll" />
+    <Content Include="GDAL\lti_lidar_dsdk.dll" />
+    <Content Include="GDAL\msvcp100.dll" />
+    <Content Include="GDAL\msvcr100.dll" />
+    <Content Include="GDAL\netcdf.dll" />
+    <Content Include="GDAL\ogr_wrap.dll" />
+    <Content Include="GDAL\openjpeg.dll" />
+    <Content Include="GDAL\osr_wrap.dll" />
+    <Content Include="GDAL\pdflib.dll" />
+    <Content Include="GDAL\proj.dll" />
+    <Content Include="GDAL\spatialite.dll" />
+    <Content Include="GDAL\sqlite3.dll" />
+    <Content Include="GDAL\ssleay32.dll" />
+    <Content Include="GDAL\xerces-c_2_8.dll" />
+    <Content Include="GDAL\zlib1.dll" />
+    <Resource Include="Images\Maps-and-Geolocation-Polyline-icon.png" />
+    <Resource Include="Images\Maps-and-Geolocation-Street-view-icon.png" />
+    <Resource Include="Images\Maps-and-Geolocation-Marker-icon.png" />
+    <Resource Include="Images\City-Gps-device-icon.png" />
+    <Resource Include="Images\Mathematic-Multiply2-icon.png" />
+    <Resource Include="Images\Maps-and-Geolocation-Street-view-icon - Copy.png" />
+    <Resource Include="Images\Numbers-2-icon.png" />
+    <Resource Include="Images\Maps-and-Geolocation-Layers-icon.png" />
+    <Resource Include="Images\1426166_10152063560557490_1984197782_n.jpg" />
+    <Resource Include="Images\Very-Basic-Ruler-icon.png" />
+    <Resource Include="Images\Weather-Partly-cloudy-day-icon.png" />
+    <Content Include="Sounds\ALARME.WAV" />
+    <Content Include="Sounds\BELL7.WAV" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CircularBuffer\CircularBuffer.csproj">
+      <Project>{21e08e11-09ab-4b87-92a4-4991d99c4988}</Project>
+      <Name>CircularBuffer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MapControlOld\MapControl.WPF.csproj">
+      <Project>{226f3575-b683-446d-a2f0-181291dc8787}</Project>
+      <Name>MapControl.WPF</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NewFolder1\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

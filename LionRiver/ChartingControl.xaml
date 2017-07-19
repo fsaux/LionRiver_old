@@ -1,0 +1,131 @@
+﻿<UserControl x:Class="LionRiver.ChartingControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:datavis="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+             xmlns:charting="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+             xmlns:chartingprimitives="clr-namespace:System.Windows.Controls.DataVisualization.Charting.Primitives;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+             xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    
+    <UserControl.Resources>
+        <Style x:Key="ChartTemplate" TargetType="charting:Chart">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border
+                            Background="Black"
+                            Padding="10">
+                            <chartingprimitives:EdgePanel
+                                x:Name="ChartArea">
+                            </chartingprimitives:EdgePanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid Height="Auto"  Width="Auto" VerticalAlignment="Stretch" Margin="5,0,5,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="55*" />
+            </Grid.ColumnDefinitions>
+
+            <chartingToolkit:Chart  Grid.Column="0" Grid.ColumnSpan="1" HorizontalAlignment="Stretch"  x:Name="chart1" VerticalAlignment="Stretch" Style="{StaticResource ChartTemplate}">
+
+                <chartingToolkit:Chart.LayoutTransform>
+                    <RotateTransform Angle="90"/>
+                </chartingToolkit:Chart.LayoutTransform>
+
+                <chartingToolkit:Chart.Axes>
+                    <!-- Shared horizontal axis -->
+                    <chartingToolkit:DateTimeAxis Foreground="White" Orientation="X" x:Name="timeaxis1">
+                        <chartingToolkit:DateTimeAxis.AxisLabelStyle>
+                            <Style TargetType="{x:Type chartingToolkit:AxisLabel}">
+                                <Setter Property="StringFormat" Value="{}{0:hh:mm}"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type chartingToolkit:AxisLabel}">
+                                            <TextBlock Text="{TemplateBinding FormattedContent}">
+                                                <TextBlock.LayoutTransform>
+                                                    <RotateTransform Angle="-90"/>
+                                                </TextBlock.LayoutTransform>
+                                            </TextBlock>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </chartingToolkit:DateTimeAxis.AxisLabelStyle>
+
+                    </chartingToolkit:DateTimeAxis>
+                </chartingToolkit:Chart.Axes>
+
+                <chartingToolkit:LineSeries
+            			ItemsSource="{Binding}"
+            			DependentValuePath="Val"
+            			IndependentValuePath="Time"
+            			x:Name="LineSeries1">
+                    <chartingToolkit:LineSeries.DependentRangeAxis>
+                        <chartingToolkit:LinearAxis
+            					x:Name="LinearAxis1"
+            					Title="{Binding}"
+            					ShowGridLines="True"
+            					Foreground="White"
+            					Location="Left"
+            					Orientation="Y" >
+                            <chartingToolkit:LinearAxis.GridLineStyle>
+                                <Style TargetType="{x:Type Line}">
+                                    <Setter Property="Stroke" Value="Gray"/>
+                                    <Setter Property="StrokeDashArray" Value="1,2"/>
+                                </Style>
+                            </chartingToolkit:LinearAxis.GridLineStyle>
+                            <chartingToolkit:LinearAxis.AxisLabelStyle>
+                                <Style TargetType="{x:Type chartingToolkit:AxisLabel}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type chartingToolkit:AxisLabel}">
+                                                <TextBlock Text="{TemplateBinding FormattedContent}">
+                                                    <TextBlock.LayoutTransform>
+                                                        <RotateTransform Angle="-90"/>
+                                                    </TextBlock.LayoutTransform>
+                                                </TextBlock>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </chartingToolkit:LinearAxis.AxisLabelStyle>
+
+                            <chartingToolkit:LinearAxis.TitleStyle>
+                                <Style TargetType="{x:Type datavis:Title}">
+                                    <Setter Property="Foreground" Value="White" />
+                                    <Setter Property="Background" Value="Green"/>
+                                </Style>
+                            </chartingToolkit:LinearAxis.TitleStyle>
+
+                        </chartingToolkit:LinearAxis>
+                    </chartingToolkit:LineSeries.DependentRangeAxis>
+                    <chartingToolkit:LineSeries.DataPointStyle>
+                        <Style TargetType="{x:Type chartingToolkit:LineDataPoint}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Setter Property="Background" Value="Green"/>
+                            <Setter Property="Opacity" Value="0" />
+                        </Style>
+                    </chartingToolkit:LineSeries.DataPointStyle>
+                </chartingToolkit:LineSeries>
+
+            </chartingToolkit:Chart>
+
+
+        </Grid>
+    </Grid>
+
+</UserControl>

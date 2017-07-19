@@ -1,0 +1,34 @@
+﻿<Window x:Class="LionRiver.WLCourseSetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:p="clr-namespace:LionRiver.Properties"
+        xmlns:local="clr-namespace:LionRiver"
+        
+        Left="{Binding Source={x:Static p:Settings.Default}, Path=LayerWindowLeft, Mode=TwoWay}" 
+        Top="{Binding Source={x:Static p:Settings.Default}, Path=LayerWindowTop, Mode=TwoWay}"        
+        
+        Title="Layer Control" SizeToContent="WidthAndHeight" ResizeMode="NoResize" 
+        ShowInTaskbar="False" Topmost="True" WindowStyle="None" AllowsTransparency="True" Background="Transparent" Width="509">
+
+    <Border Background="#FF6A6C97" CornerRadius="10" MouseLeftButtonDown="Border_MouseLeftButtonDown" >
+        <Grid Height="Auto"  Width="auto" VerticalAlignment="Top" Margin="3,3,3,3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Image  Grid.Row="0" Source="Images/Mathematic-Multiply2-icon.png"  Stretch="None" HorizontalAlignment="Right" MouseLeftButtonDown="Image_MouseLeftButtonDown" />
+            
+            <StackPanel Grid.Row="1">
+                <Button Content="Windward" HorizontalAlignment="Center" />
+                <Button Content="Leeward" HorizontalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Name="SetLinePinButton" Content="Pin" HorizontalAlignment="Center" Command="local:CommandLibrary.SetLinePin"/>
+                    <Button Name="SetLineBoatButton" Content="Boat" HorizontalAlignment="Center" Command="local:CommandLibrary.SetLineBoat"/>
+                </StackPanel>
+            </StackPanel>
+    
+
+        </Grid>
+    </Border>
+</Window>

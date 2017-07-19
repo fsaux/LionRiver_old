@@ -1,0 +1,160 @@
+﻿<Window x:Class="LionRiver.SetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:p="clr-namespace:LionRiver.Properties"        
+        xmlns:dg="http://schemas.microsoft.com/wpf/2008/toolkit"
+        xmlns:my="clr-namespace:LionRiver"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Title="SetupWindow" ResizeMode="NoResize" Background="#FFD4D0C8" Margin="10" Padding="10" mc:Ignorable="d"  Height="Auto" Width="Auto" d:DesignHeight="367" d:DesignWidth="463" SizeToContent="WidthAndHeight" >
+
+    <Grid Height="auto" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TabControl HorizontalAlignment="Stretch" Name="tabControl1" VerticalAlignment="Stretch" Grid.RowSpan="3">
+            <TabItem Header="Comm" Name="tabItem1">
+                <Grid>
+                    <ComboBox Name="Combobox1" Width="92" Height="23"  Margin="15,0,0,211" HorizontalAlignment="Left" SelectionChanged="Combobox1_SelectionChanged">
+                        <ComboBox.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFB888E2" Offset="0" />
+                                <GradientStop Color="Violet" Offset="1" />
+                            </LinearGradientBrush>
+                        </ComboBox.Background>
+                    </ComboBox>
+                    <ComboBox Height="23" Name="Combobox2" Width="93" Margin="119,0,228,211" SelectionChanged="Combobox2_SelectionChanged">
+                        <ComboBox.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="Orange" Offset="0" />
+                                <GradientStop Color="#FFF8E0B2" Offset="1" />
+                            </LinearGradientBrush>
+                        </ComboBox.Background>
+                    </ComboBox>
+                    <ComboBox Height="23"  Margin="333,12,13,222" Name="Combobox4" Width="93" SelectionChanged="Combobox4_SelectionChanged">
+                        <ComboBox.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFDEDE61" Offset="0" />
+                                <GradientStop Color="Yellow" Offset="1" />
+                            </LinearGradientBrush>
+                        </ComboBox.Background>
+                    </ComboBox>
+                    <ComboBox Height="23" Name="Combobox3" Width="92" Margin="226,13,0,223" SelectionChanged="Combobox3_SelectionChanged" HorizontalAlignment="Left">
+                        <ComboBox.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FF6ABCD4" Offset="0" />
+                                <GradientStop Color="Cyan" Offset="1" />
+                            </LinearGradientBrush>
+                        </ComboBox.Background>
+                    </ComboBox>
+                    <DataGrid IsReadOnly="true" CanUserResizeRows="False" CanUserSortColumns="False" GridLinesVisibility="All" HeadersVisibility="Column" 
+                        ItemsSource="{Binding}" AutoGenerateColumns="False" Height="190" Margin="15,76,14,0" Name="dataGrid1" VerticalAlignment="Top">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Name}" Header="Sentence" />
+                            <DataGridTemplateColumn Header="Receive" IsReadOnly="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox SelectedIndex="{Binding Path=InPort,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                                            <ComboBoxItem Content="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=my:SetupWindow, AncestorLevel=1}, Path=DataContext.port1.Value}" Background="Violet" />
+                                            <ComboBoxItem Content="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=my:SetupWindow, AncestorLevel=1}, Path=DataContext.port2.Value}" Background="Orange" />
+                                            <ComboBoxItem Content="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=my:SetupWindow, AncestorLevel=1}, Path=DataContext.port3.Value}" Background="Cyan" />
+                                            <ComboBoxItem Content="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=my:SetupWindow, AncestorLevel=1}, Path=DataContext.port4.Value}" Background="Yellow" />
+                                            <ComboBox.Style>
+                                                <Style TargetType="{x:Type ComboBox}">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="SelectedIndex" Value="0">
+                                                            <Setter Property="Background" Value="Violet"/>
+                                                        </Trigger>
+                                                        <Trigger Property="SelectedIndex" Value="1">
+                                                            <Setter Property="Background" Value="Orange"/>
+                                                        </Trigger>
+                                                        <Trigger Property="SelectedIndex" Value="2">
+                                                            <Setter Property="Background" Value="Cyan"/>
+                                                        </Trigger>
+                                                        <Trigger Property="SelectedIndex" Value="3">
+                                                            <Setter Property="Background" Value="Yellow"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ComboBox.Style>
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn HeaderStyle="{StaticResource ColumnHeaderStyle1}" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Path=OutPort1,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DataGridCheckBox}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn HeaderStyle="{StaticResource ColumnHeaderStyle2}" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Path=OutPort2,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DataGridCheckBox}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn HeaderStyle="{StaticResource ColumnHeaderStyle3}" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Path=OutPort3,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DataGridCheckBox}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn HeaderStyle="{StaticResource ColumnHeaderStyle4}" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Path=OutPort4,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DataGridCheckBox}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Binding="{Binding Comments}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Calibration">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="199" />
+                        <ColumnDefinition Width="60" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Magnetic Var" Height="26" HorizontalAlignment="Left" Margin="10,10,0,0" Name="label9" VerticalAlignment="Top" />
+                    <TextBox Height="23" HorizontalAlignment="Left" Margin="154,10,0,0" Name="textBox1" VerticalAlignment="Top" Width="54" Text="{Binding Source={x:Static p:Settings.Default}, Path=MagVar, Mode=TwoWay}" Grid.ColumnSpan="2" />
+                    <Label Content="GPS offset to bow" Height="26" HorizontalAlignment="Left" Margin="10,42,0,0" Name="label21" VerticalAlignment="Top" />
+                    <TextBox Height="23" HorizontalAlignment="Left" Margin="154,42,0,0" Name="textBox2" VerticalAlignment="Top" Width="54" Text="{Binding Source={x:Static p:Settings.Default}, Path=GPSoffsetToBow, Mode=TwoWay}" AcceptsReturn="False" Grid.ColumnSpan="2" />
+                    <Label Content="Polar file:" Height="26" HorizontalAlignment="Left" Margin="10,73,0,0" VerticalAlignment="Top" />
+                    <TextBox Height="23" HorizontalAlignment="Left" Margin="10,99,0,0"  VerticalAlignment="Top" Width="230" Text="{Binding Source={x:Static p:Settings.Default}, Path=PolarFile, Mode=TwoWay}" AcceptsReturn="False" Grid.ColumnSpan="2" />
+                    <Button Content="..." Height="23" HorizontalAlignment="Left" Margin="14,127,0,0" Name="button4" VerticalAlignment="Top" Width="26" Grid.Column="1" Click="button4_Click" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Route/Track">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Label Content="Waypoint proximity" Height="26" HorizontalAlignment="Left" Margin="10,10,0,0" Name="label22" VerticalAlignment="Top" />
+                    <TextBox Height="23" HorizontalAlignment="Left" Margin="154,10,0,0" Name="textBox3" Text="{Binding Source={x:Static p:Settings.Default}, Path=WptProximity, Mode=TwoWay}" VerticalAlignment="Top" Width="54" />
+                    <Label Content="Log file" Height="26" HorizontalAlignment="Left" Margin="10,41,0,0" x:Name="label22_Copy" VerticalAlignment="Top" />
+                    <TextBox Height="23" HorizontalAlignment="Left" Margin="77,44,0,0" x:Name="textBox4" Text="{Binding LogFile, Mode=TwoWay, Source={x:Static p:Settings.Default}}" VerticalAlignment="Top" Width="257" />
+                    <Button Content="..." Height="23" HorizontalAlignment="Left" Margin="308,72,0,0" Name="button5" VerticalAlignment="Top" Width="26" Click="button5_Click"  />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Maps">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Label Content="Directory:" Height="26" HorizontalAlignment="Left" Margin="122,6,0,0" Name="label25" VerticalAlignment="Top" />
+                    <TextBox Height="23" HorizontalAlignment="Left" Margin="122,32,0,0" Name="textBox6" Text="{Binding Source={x:Static p:Settings.Default}, Path=Layer1Directory, Mode=TwoWay}" VerticalAlignment="Top" Width="170" />
+                    <Button Content="..." Height="23" HorizontalAlignment="Left" Margin="305,32,0,0" Name="button3" VerticalAlignment="Top" Width="26" Click="button3_Click" />
+                    <Label Content="Directory:" Height="26" HorizontalAlignment="Left" Margin="122,63,0,0" x:Name="label25_Copy" VerticalAlignment="Top" />
+                    <TextBox Height="23" HorizontalAlignment="Left" Margin="122,89,0,0" x:Name="textBox6_Copy" Text="{Binding Layer2Directory, Mode=TwoWay, Source={x:Static p:Settings.Default}}" VerticalAlignment="Top" Width="170" />
+                    <Button Content="..." Height="23" HorizontalAlignment="Left" Margin="306,89,0,0" x:Name="button3_Copy" VerticalAlignment="Top" Width="26" Click="button3_Copy_Click"  />
+                    <TextBox Height="23" HorizontalAlignment="Left" Margin="11,32,0,0" x:Name="textBox6_Copy1" Text="{Binding Layer1Name, Mode=TwoWay, Source={x:Static p:Settings.Default}}" VerticalAlignment="Top" Width="97" />
+                    <Label Content="Layer 1 name" Height="26" HorizontalAlignment="Left" Margin="11,6,0,0" x:Name="label25_Copy1" VerticalAlignment="Top" />
+                    <TextBox Height="23" HorizontalAlignment="Left" Margin="11,89,0,0" x:Name="textBox6_Copy2" Text="{Binding Layer2Name, Mode=TwoWay, Source={x:Static p:Settings.Default}}" VerticalAlignment="Top" Width="97" />
+                    <Label Content="Layer 2 name" Height="26" HorizontalAlignment="Left" Margin="11,63,0,0" x:Name="label25_Copy2" VerticalAlignment="Top" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <Button Grid.Row="2" Content="OK" Height="20" Name="button1" IsCancel="False" Click="button1_Click" HorizontalAlignment="Right" Margin="0,309,10,10" Width="54" />
+    </Grid>
+</Window>

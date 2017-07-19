@@ -1,0 +1,74 @@
+﻿<Window x:Class="LionRiver.RouteControlWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:LionRiver"
+        xmlns:p="clr-namespace:LionRiver.Properties"
+
+        Left="{Binding Source={x:Static p:Settings.Default}, Path=RteWindowLeft, Mode=TwoWay}" 
+        Top="{Binding Source={x:Static p:Settings.Default}, Path=RteWindowTop, Mode=TwoWay}"
+        
+        
+        Title="Route Control" SizeToContent="WidthAndHeight" ResizeMode="NoResize" 
+        ShowInTaskbar="False" Topmost="True" WindowStyle="None" AllowsTransparency="True" Background="Transparent">
+
+    <Window.Resources>
+        <local:VisToCheckConverter x:Key="visToCheckConverter" />
+    </Window.Resources>
+    
+    <Border Background="#FF6A6C97" CornerRadius="10" MouseLeftButtonDown="Border_MouseLeftButtonDown">
+        <Grid Height="Auto"  Width="432" VerticalAlignment="Top" Margin="3,3,3,3">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            </Grid.RowDefinitions>
+                
+         <DockPanel Grid.Row="1" Height="Auto" Width="Auto" Background="{x:Null}" LastChildFill="False">
+             <Button x:Name="LoadButton" Content="Load"  Margin="2" />
+             <ComboBox x:Name="RouteListComboBox" Width="120" Margin="2"
+                       ItemsSource="{Binding}"
+                       DisplayMemberPath="Name" SelectionChanged="RouteListComboBox_SelectionChanged" Visibility="Visible" />             
+             <TextBox Name="RenameTextBox"  Width="120" Visibility="Collapsed" PreviewKeyDown="RenameTextBox_PreviewKeyDown"/>             
+             <Button Content="New"  Margin="2" Command="local:CommandLibrary.NewRoute" />
+             <Button Content="Rename"  Name="RenameButton" Margin="2" IsEnabled="False" Click="RenameButton_Click"  />
+             <Button Content="Reverse"  Margin="2" Command="local:CommandLibrary.ReverseRoute" />
+             <Button Content="Delete"  Margin="2" Command="local:CommandLibrary.DeleteRoute" />
+            </DockPanel>
+
+            <DockPanel Grid.Row="3" Height="Auto" Width="Auto" Background="{x:Null}" LastChildFill="False" Margin="0,3,0,3">
+                <Button Content="Activate"  Margin="2" Command="local:CommandLibrary.ActivateRoute" CommandParameter="{Binding ElementName=RouteListComboBox}"/>
+                <Button Content="Stop Nav"  Margin="2" Command="local:CommandLibrary.StopNav" />
+                <Button Content="&lt;&lt;"  Margin="2" Command="local:CommandLibrary.RwdRoute"  />
+                <Button Content="&gt;&gt;"  Margin="2" Command="local:CommandLibrary.FwdRoute"  />
+                <CheckBox Content="Visible" VerticalAlignment="Center" IsChecked="True" Foreground="White" HorizontalAlignment="Center" DockPanel.Dock="Right" Margin="0,0,8,0"/>
+            </DockPanel>
+
+
+            <Image  Source="Images/Mathematic-Multiply2-icon.png" Stretch="None" HorizontalAlignment="Right" MouseLeftButtonDown="Image_MouseLeftButtonDown"/>
+
+            <DataGrid
+            ItemsSource="{Binding}"
+            RowStyle="{StaticResource RowStyle}"
+            ColumnHeaderStyle="{StaticResource ColumnHeaderStyle}"
+            AutoGenerateColumns="False" VerticalGridLinesBrush="Silver"
+            Foreground="Silver"
+            Background="{x:Null}"
+            Grid.Row="2"
+            HorizontalGridLinesBrush="Silver"  Name="DataGrid1" IsReadOnly="true" BorderBrush="Silver" CanUserResizeRows="False" CanUserSortColumns="False" GridLinesVisibility="All" HeadersVisibility="Column" HorizontalAlignment="Left" Margin="2" BorderThickness="2">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn ElementStyle="{StaticResource CellStyle}" Header="From"  Binding="{Binding FromMark.Name}"  CanUserSort="False" MinWidth="60" />
+                <DataGridTextColumn ElementStyle="{StaticResource CellStyle}" Header="To"   Binding="{Binding ToMark.Name}" CanUserSort="False" MinWidth="60" />
+                <DataGridTextColumn ElementStyle="{StaticResource CellStyle}" Header="Distance" Binding="{Binding Distance, StringFormat={}{0:n1}}" CanUserSort="False" MinWidth="60" />
+                <DataGridTextColumn ElementStyle="{StaticResource CellStyle}" Header="Acc Dist" Binding="{Binding AccDistance, StringFormat={}{0:n1}}" CanUserSort="False" MinWidth="60" />
+                <DataGridTextColumn ElementStyle="{StaticResource CellStyle}" Header="Bearing" Binding="{Binding Bearing, StringFormat={}{0:n0}}"  CanUserSort="False" MinWidth="60" />
+                <DataGridTextColumn ElementStyle="{StaticResource CellStyle}" Header="TWA"   CanUserSort="False" MinWidth="60" />
+                <DataGridTextColumn ElementStyle="{StaticResource CellStyle}" Header="ETA"   CanUserSort="False" MinWidth="60" />
+            </DataGrid.Columns>
+
+        </DataGrid>
+    </Grid>
+    </Border>
+
+</Window>

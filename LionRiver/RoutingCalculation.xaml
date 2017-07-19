@@ -1,0 +1,79 @@
+﻿<UserControl x:Class="LionRiver.RoutingCalculationControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+
+             mc:Ignorable="d" 
+             d:DesignHeight="147" d:DesignWidth="943">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="RedBackground">
+            <Grid>
+                <TextBlock Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Text="{Binding}"/>
+            </Grid>
+        </DataTemplate>
+
+        <Style TargetType="ToggleButton" x:Key="checkedToggle">
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="ContentTemplate" Value="{StaticResource RedBackground}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel Height="Auto" VerticalAlignment="Bottom" Margin="0,0,0,10">
+        <!--<CheckBox Content="Wind" Name="GribWindCheck" Margin="5,0,5,5" IsChecked="True" IsEnabled="False" Foreground="Lime" />-->
+        <DockPanel     Margin="5">
+            <ComboBox x:Name="RouteListCombo" Width="81" Margin="2" ItemsSource="{Binding}" DisplayMemberPath="Name" Background="#FF2E2E2E" Foreground="Gray"/>
+            <xctk:DateTimePicker x:Name="RouteStartTimePicker" Watermark="Select start time" Background="#FF2E2E2E" Foreground="Gray" Width="150" Format="Custom" FormatString="MMMM dd, HH:mm" />
+            <Button Name="SetRouteCalcStartToNow"  Content="Now"  Margin="2" IsTabStop="False" VerticalAlignment="Top" Click="SetRouteCalcStartToNow_Click" />
+            <Button Name="ClearResults"  Content="Clear"  Margin="2" IsTabStop="False" VerticalAlignment="Top"  DockPanel.Dock="Right"/>
+            <ComboBox x:Name="ResultCombo" Width="88" Margin="2" ItemsSource="{Binding}" DisplayMemberPath="ID" Background="#FF2E2E2E" Foreground="Gray" DockPanel.Dock="Right" HorizontalAlignment="Right" />
+        </DockPanel>
+        <DockPanel     Margin="5" LastChildFill="True">
+            <xctk:DoubleUpDown x:Name="PerformanceAdjust" FormatString="P0" Value="1" Increment=".01" Maximum="2" Minimum="0" Background="#FF2E2E2E" Foreground="Gray" BorderThickness="0" Width="53" Margin="5,0,0,0"/>
+            <Label Content="Perf" Foreground="Gray" Background="#FF2E2E2E"/>
+            <CheckBox Name="UseCurrent" Margin="5,0"  Background="#FF2E2E2E" VerticalAlignment="Center"/>
+            <Label Content="Current" Foreground="Gray" Background="#FF2E2E2E"/>
+            <Button Name="CalculateRoute" Margin="2" IsTabStop="False" VerticalAlignment="Top" Width="62" Height="22" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Right">
+                <Button.Content>
+                    <Grid>
+                        <ProgressBar x:Name="Progress" Margin="0" Foreground="Red" Background="{x:Null}"/>
+                        <Label Content="Calc" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="{x:Null}"/>
+                    </Grid>
+                </Button.Content>
+            </Button>
+            <TextBox x:Name="ResultText" DockPanel.Dock="Right" Background="{x:Null}" Foreground="LimeGreen" Width="121" BorderThickness="0" HorizontalAlignment="Left" />
+            <Slider Name="RouteReplaySlider" Orientation="Horizontal" Height="Auto" TickPlacement="BottomRight" Maximum="100" Margin="50,0,5,0" TickFrequency="10" Foreground="White" VerticalAlignment="Top" SmallChange="1" LargeChange="10" IsEnabled="False" />
+        </DockPanel>
+
+        <!--<Grid Width="300" Height="Auto" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.Background>
+                <LinearGradientBrush x:Name="linearGradient" StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#FF093893" Offset="0.203" />
+                        <GradientStop Color="#FF10FF20" Offset="0.535" />
+                        <GradientStop Color="#FFFFFF60" Offset="0.663" />
+                        <GradientStop Color="#FFFF4B00" Offset="0.855" />
+                        <GradientStop Color="#FFA925FF" Offset="1" />
+                    <GradientStop Color="#FF94C8F5" Offset="0.343" />
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Label Content="3" HorizontalContentAlignment="Center" Foreground="White" />
+            <Label Content="9" Grid.Column="1" HorizontalAlignment="Center" Foreground="White" />
+            <Label Content="15" Grid.Column="2" HorizontalAlignment="Center" Foreground="White" />
+            <Label Content="21" Grid.Column="3" HorizontalAlignment="Center" Foreground="White" />
+            <Label Content="27" Grid.Column="4" HorizontalAlignment="Center" Foreground="White" />
+        </Grid>-->
+
+    </StackPanel>
+</UserControl>
