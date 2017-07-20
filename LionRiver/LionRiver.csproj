@@ -437,17 +437,17 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CircularBuffer\CircularBuffer.csproj">
+    <Folder Include="NewFolder1\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CircularBuffer\CircularBuffer.csproj">
       <Project>{21e08e11-09ab-4b87-92a4-4991d99c4988}</Project>
       <Name>CircularBuffer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\MapControlOld\MapControl.WPF.csproj">
+    <ProjectReference Include="..\MapControlOld\MapControl.WPF.csproj">
       <Project>{226f3575-b683-446d-a2f0-181291dc8787}</Project>
       <Name>MapControl.WPF</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
