@@ -1834,7 +1834,6 @@ namespace LionRiver
             else
             {
                 geometry.Clear();
-                geometry.ClearValue(Geometry.TransformProperty);
             }
         }
 
@@ -2128,7 +2127,6 @@ namespace LionRiver
             else
             {
                 geometry.Clear();
-                geometry.ClearValue(Geometry.TransformProperty);
             }
         }
 
@@ -2315,7 +2313,6 @@ namespace LionRiver
             else
             {
                 geometry.Clear();
-                geometry.ClearValue(Geometry.TransformProperty);
             }
         }
 
@@ -2444,7 +2441,6 @@ namespace LionRiver
             else
             {
                 geometry.Clear();
-                geometry.ClearValue(Geometry.TransformProperty);
             }
         }
 
@@ -2527,7 +2523,6 @@ namespace LionRiver
             else
             {
                 geometry.Clear();
-                geometry.ClearValue(Geometry.TransformProperty);
             }
         }
 

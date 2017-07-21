@@ -415,8 +415,7 @@ namespace LionRiver
                 {
                     UriFormat = "http://{c}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 }
-            };
-            
+            };        
 
             MapLayer3.Opacity = 0.8;
             //map.TileLayers.Add(MapLayer3);
