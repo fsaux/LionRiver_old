@@ -1824,14 +1824,12 @@ namespace LionRiver
             {
                 using (var context = geometry.Open())
                 {
-                    var startPoint = ParentMap.MapTransform.Transform(l1);
-                    var endPoint = ParentMap.MapTransform.Transform(l2);
+                    var startPoint = ParentMap.MapProjection.LocationToPoint(l1);
+                    var endPoint = ParentMap.MapProjection.LocationToPoint(l2);
 
                     context.BeginFigure(startPoint, false, false);
                     context.LineTo(endPoint, true, false);
-                }
-
-                geometry.Transform = ParentMap.ViewportTransform;
+                }                
             }
             else
             {
@@ -2090,8 +2088,8 @@ namespace LionRiver
             {
                 using (var context = geometry.Open())
                 {
-                    var center = ParentMap.MapTransform.Transform(l1);
-                    var endPoint = ParentMap.MapTransform.Transform(l2);
+                    var center = ParentMap.MapProjection.LocationToPoint(l1);
+                    var endPoint = ParentMap.MapProjection.LocationToPoint(l2);
 
                     var radius = Math.Sqrt((center.X - endPoint.X) * (center.X - endPoint.X) + (center.Y - endPoint.Y) * (center.Y - endPoint.Y));
 
@@ -2126,8 +2124,6 @@ namespace LionRiver
                     context.LineTo(ptwd, false, false);
 
                 }
-
-                geometry.Transform = ParentMap.ViewportTransform;
             }
             else
             {
@@ -2243,7 +2239,7 @@ namespace LionRiver
             if (ParentMap != null && l != null)
             {
 
-                var p1 = ParentMap.MapTransform.Transform(l);
+                var p1 = ParentMap.MapProjection.LocationToPoint(l);
                 var pcenter = new Point(p1.X, p1.Y + 3);
 
                 var p2 = new Point(pcenter.X, pcenter.Y + 3);
@@ -2313,7 +2309,6 @@ namespace LionRiver
                 TransformGroup tg = new TransformGroup();
                 tg.Children.Add(new RotateTransform(Direction, p1.X, p1.Y));
                 tg.Children.Add(new ScaleTransform(Scale, Scale, p1.X, p1.Y));
-                tg.Children.Add(ParentMap.ViewportTransform);
                 geometry.Transform = tg;
 
             }
@@ -2430,7 +2425,7 @@ namespace LionRiver
             if (ParentMap != null && l != null)
             {
 
-                var p1 = ParentMap.MapTransform.Transform(l);
+                var p1 = ParentMap.MapProjection.LocationToPoint(l);
                 var p2 = new Point(p1.X , p1.Y + 9);
                 var p3 = new Point(p1.X +3, p1.Y + 9);
 
@@ -2442,8 +2437,7 @@ namespace LionRiver
 
                     TransformGroup tg = new TransformGroup();
                     tg.Children.Add(new RotateTransform(Direction, p1.X, p1.Y));
-                    tg.Children.Add(new ScaleTransform(Scale, Scale, p1.X, p1.Y));
-                    tg.Children.Add(ParentMap.ViewportTransform);
+                    tg.Children.Add(new ScaleTransform(Scale, Scale, p1.X, p1.Y));                    
                     geometry.Transform = tg;
                 }
             }
@@ -2510,7 +2504,7 @@ namespace LionRiver
             if (ParentMap != null && l != null)
             {
 
-                var pcenter = ParentMap.MapTransform.Transform(l);
+                var pcenter = ParentMap.MapProjection.LocationToPoint(l);
 
                 var p1 = new Point(pcenter.X + 1, pcenter.Y + 1);
                 var p2 = new Point(pcenter.X - 1, pcenter.Y + 1);
@@ -2526,8 +2520,7 @@ namespace LionRiver
                     context.LineTo(p4, false, false);
 
                     TransformGroup tg = new TransformGroup();
-                    tg.Children.Add(new ScaleTransform(Scale, Scale, pcenter.X, pcenter.Y));
-                    tg.Children.Add(ParentMap.ViewportTransform);
+                    tg.Children.Add(new ScaleTransform(Scale, Scale, pcenter.X, pcenter.Y));                    
                     geometry.Transform = tg;
                 }
             }

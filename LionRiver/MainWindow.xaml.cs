@@ -219,8 +219,8 @@ namespace LionRiver
         private MapOrientationMode mapOrientationMode = MapOrientationMode.NorthUp;
         private MapCenterMode mapCenterMode = MapCenterMode.NotCentered;
 
-        TileLayer MapLayer1=new TileLayer();
-        TileLayer MapLayer2=new TileLayer();
+        MapTileLayer MapLayer1=new MapTileLayer();
+        MapTileLayer MapLayer2=new MapTileLayer();
 
         LayerControlWindow layerControl = new LayerControlWindow();
 
@@ -339,14 +339,14 @@ namespace LionRiver
         }
 
         SailingMode sailingMode = SailingMode.None;
-        SailingMode prevSailingMode = SailingMode.None; 
+        SailingMode prevSailingMode = SailingMode.None;
 
         #endregion
 
         #endregion
 
         #region MainWindow Constructor (Initializers)
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -392,25 +392,39 @@ namespace LionRiver
             Gdal.AllRegister();
             Ogr.RegisterAll();
 
-            MapLayer1.TileSource = new TileSource("file:\\" + Properties.Settings.Default.Layer1Directory + "\\{z}\\{x}\\{v}.png");
+            MapLayer1.TileSource = new TileSource
+            {
+                UriFormat = "file:\\" + Properties.Settings.Default.Layer1Directory + "\\{z}\\{x}\\{v}.png"
+            };
             MapLayer1.Opacity = Properties.Settings.Default.Layer1Opacity;
             MapLayer1.MaxZoomLevel = 18;
-            if (Properties.Settings.Default.Layer1Check) map.TileLayers.Add(MapLayer1);
+            if (Properties.Settings.Default.Layer1Check) map.Children.Add(MapLayer1);
 
-            MapLayer2.TileSource = new TileSource("file://" + Properties.Settings.Default.Layer2Directory + "/{z}/{x}/{v}.png");
+            MapLayer2.TileSource = new TileSource
+            {
+                UriFormat = "file:\\" + Properties.Settings.Default.Layer2Directory + "/{z}/{x}/{v}.png"
+            };                
             MapLayer2.Opacity = Properties.Settings.Default.Layer2Opacity;
             MapLayer2.MaxZoomLevel = 18;
-            if (Properties.Settings.Default.Layer2Check) map.TileLayers.Add(MapLayer2);
+            if (Properties.Settings.Default.Layer2Check) map.Children.Add(MapLayer2);
 
-            TileLayer MapLayer3 = new TileLayer();
-            MapLayer3.TileSource = new TileSource("http://{c}.tile.openstreetmap.org/{z}/{x}/{y}.png");
+            MapTileLayer MapLayer3 = new MapTileLayer
+            {
+                SourceName = "openstreetmap",
+                TileSource = new TileSource
+                {
+                    UriFormat = "http://{c}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                }
+            };
+            
+
             MapLayer3.Opacity = 0.8;
             //map.TileLayers.Add(MapLayer3);
 
             map.Center = Properties.Settings.Default.MapCenter;
             map.ZoomLevel = Properties.Settings.Default.MapScale;
 
-            MapBase.AnimationDuration = TimeSpan.FromSeconds(0);
+            //MapBase.AnimationDuration = TimeSpan.FromSeconds(0);
 
             #endregion
 
@@ -1357,11 +1371,17 @@ namespace LionRiver
                 InitializeSerialPort4();
                 DataReceiverStatus4.Result = ReceiverResult.NoData;
 
-                MapLayer1.TileSource = new TileSource("file:\\" + Properties.Settings.Default.Layer1Directory + "\\{z}\\{x}\\{v}.png");
+                MapLayer1.TileSource = new TileSource
+                {
+                    UriFormat = "file:\\" + Properties.Settings.Default.Layer1Directory + "\\{z}\\{x}\\{v}.png"
+                };
                 MapLayer1.Opacity = Properties.Settings.Default.Layer1Opacity;
                 MapLayer1.MaxZoomLevel = 18;
 
-                MapLayer2.TileSource = new TileSource("file://" + Properties.Settings.Default.Layer2Directory + "/{z}/{x}/{v}.png");
+                MapLayer2.TileSource = new TileSource
+                {
+                    UriFormat = "file://" + Properties.Settings.Default.Layer2Directory + "/{z}/{x}/{v}.png"
+                };
                 MapLayer2.Opacity = Properties.Settings.Default.Layer2Opacity;
                 MapLayer2.MaxZoomLevel = 18;
                                 
@@ -2235,24 +2255,24 @@ namespace LionRiver
                 case LayerControlWindow.LayerCtrlCmd.Layer1Changed:
                     if(e.Visible==Visibility.Hidden)
                     {
-                        map.TileLayers.Remove(MapLayer1);
+                        map.Children.Remove(MapLayer1);
                         break;
                     }
                     else
                     {
-                        map.TileLayers.Insert(0, MapLayer1);
+                        map.Children.Insert(0, MapLayer1);
                         break;
                     }
 
                 case LayerControlWindow.LayerCtrlCmd.Layer2Changed:
                     if (e.Visible == Visibility.Hidden)
                     {
-                        map.TileLayers.Remove(MapLayer2);
+                        map.Children.Remove(MapLayer2);
                         break;
                     }
                     else                    
                     {
-                        map.TileLayers.Add(MapLayer2);                    
+                        map.Children.Add(MapLayer2);                    
                         break;
                     }
 
