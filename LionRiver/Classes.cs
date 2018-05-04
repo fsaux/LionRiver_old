@@ -376,6 +376,10 @@ namespace LionRiver
             }
             else
             {
+                // ******************* 
+                // * VERIFICAR QUE SEA MINIMA DISTANCIA 
+                // *******************
+
                 return (from uvp in uvlist
                         orderby (uvp.u * uvp.u + uvp.v * uvp.v) descending
                         select uvp).FirstOrDefault();
@@ -1785,15 +1789,15 @@ namespace LionRiver
         }
     }
 
-    public class MapSegment : MapPath
+    public class MapSegment : MapShape
     {
         public static readonly DependencyProperty FromLocationProperty = DependencyProperty.Register(
             "FromLocation", typeof(Location), typeof(MapSegment),
-            new PropertyMetadata(null, LocationPropertyChanged));
+            new PropertyMetadata(null, (o, e) => ((MapSegment)o).LocationPropertyChanged(e)));
 
         public static readonly DependencyProperty ToLocationProperty = DependencyProperty.Register(
             "ToLocation", typeof(Location), typeof(MapSegment),
-            new PropertyMetadata(null, LocationPropertyChanged));
+            new PropertyMetadata(null, (o, e) => ((MapSegment)o).LocationPropertyChanged(e)));
 
         public Location FromLocation
         {
@@ -1809,39 +1813,38 @@ namespace LionRiver
 
         public MapSegment()
         {
-            Data = new StreamGeometry();
             this.Stroke = Brushes.Red;
             this.StrokeThickness = 3;
         }
 
         protected override void UpdateData()
         {
-            var geometry = (StreamGeometry)Data;
+            var figures = ((PathGeometry)Data).Figures;
+            figures.Clear();
+
             var l1 = FromLocation;
             var l2 = ToLocation;
 
             if (ParentMap != null && l1 != null && l2 != null)
             {
-                using (var context = geometry.Open())
-                {
-                    var startPoint = ParentMap.MapProjection.LocationToPoint(l1);
-                    var endPoint = ParentMap.MapProjection.LocationToPoint(l2);
+                var startPoint = ParentMap.MapProjection.LocationToPoint(l1);
+                var endPoint = ParentMap.MapProjection.LocationToPoint(l2);
 
-                    context.BeginFigure(startPoint, false, false);
-                    context.LineTo(endPoint, true, false);
-                }                
-            }
-            else
-            {
-                geometry.Clear();
+                var figure = new PathFigure
+                {
+                    StartPoint = startPoint,
+                    IsClosed = false,
+                    IsFilled = false
+                };
+
+                figure.Segments.Add(new LineSegment(endPoint, true));
+                figures.Add(figure);              
             }
         }
 
-        private static void LocationPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        protected void LocationPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
-            var mapSegment = (MapSegment)obj;
-            mapSegment.UpdateData();
-            mapSegment.InvalidateVisual();
+            UpdateData();
         }
     }
 
@@ -2044,15 +2047,15 @@ namespace LionRiver
 
     }
 
-    public class MapMeasureRange : MapPath
+    public class MapMeasureRange : MapShape
     {
         public static readonly DependencyProperty FromLocationProperty = DependencyProperty.Register(
             "FromLocation", typeof(Location), typeof(MapMeasureRange),
-            new PropertyMetadata(null, LocationPropertyChanged));
+            new PropertyMetadata(null, (o, e) => ((MapMeasureRange)o).LocationPropertyChanged(e)));
 
         public static readonly DependencyProperty ToLocationProperty = DependencyProperty.Register(
             "ToLocation", typeof(Location), typeof(MapMeasureRange),
-            new PropertyMetadata(null, LocationPropertyChanged));
+            new PropertyMetadata(null, (o, e) => ((MapMeasureRange)o).LocationPropertyChanged(e)));
 
         public Location FromLocation
         {
@@ -2070,7 +2073,6 @@ namespace LionRiver
 
         public MapMeasureRange()
         {
-            Data = new StreamGeometry();
             this.Stroke = Brushes.LightGreen;
             this.StrokeDashArray = new DoubleCollection() { 2, 4 };
             this.StrokeThickness = 1;
@@ -2079,62 +2081,75 @@ namespace LionRiver
 
         protected override void UpdateData()
         {
-            var geometry = (StreamGeometry)Data;
+            var figures = ((PathGeometry)Data).Figures;
+            figures.Clear();
+
             var l1 = FromLocation;
             var l2 = ToLocation;
 
             if (ParentMap != null && l1 != null && l2 != null)
             {
-                using (var context = geometry.Open())
+                var center = ParentMap.MapProjection.LocationToPoint(l1);
+                var endPoint = ParentMap.MapProjection.LocationToPoint(l2);
+
+                var radius = Math.Sqrt((center.X - endPoint.X) * (center.X - endPoint.X) + (center.Y - endPoint.Y) * (center.Y - endPoint.Y));
+
+                var ptwd = new Point(center.X + radius * Math.Sin(TWD * Math.PI / 180), center.Y + radius * Math.Cos(TWD * Math.PI / 180));
+
+                double ControlPointRatio = (Math.Sqrt(2) - 1) * 4 / 3;
+
+                var x0 = center.X - radius;
+                var x1 = center.X - radius * ControlPointRatio;
+                var x2 = center.X;
+                var x3 = center.X + radius * ControlPointRatio;
+                var x4 = center.X + radius;
+
+                var y0 = center.Y - radius;
+                var y1 = center.Y - radius * ControlPointRatio;
+                var y2 = center.Y;
+                var y3 = center.Y + radius * ControlPointRatio;
+                var y4 = center.Y + radius;
+
+                var figure = new PathFigure
                 {
-                    var center = ParentMap.MapProjection.LocationToPoint(l1);
-                    var endPoint = ParentMap.MapProjection.LocationToPoint(l2);
+                    StartPoint = new Point(x2, y0),
+                    IsClosed = false,
+                    IsFilled = false
+                };
 
-                    var radius = Math.Sqrt((center.X - endPoint.X) * (center.X - endPoint.X) + (center.Y - endPoint.Y) * (center.Y - endPoint.Y));
+                figure.Segments.Add(new BezierSegment(new Point(x3, y0), new Point(x4, y1), new Point(x4, y2), true));
+                figure.Segments.Add(new BezierSegment(new Point(x4, y3), new Point(x3, y4), new Point(x2, y4), true));
+                figure.Segments.Add(new BezierSegment(new Point(x1, y4), new Point(x0, y3), new Point(x0, y2), true));
+                figure.Segments.Add(new BezierSegment(new Point(x0, y1), new Point(x1, y0), new Point(x2, y0), true));
 
-                    var ptwd = new Point(center.X + radius * Math.Sin(TWD * Math.PI / 180), center.Y + radius * Math.Cos(TWD * Math.PI / 180));
+                var figure1 = new PathFigure
+                {
+                    StartPoint = center,
+                    IsClosed = false,
+                    IsFilled = false
+                };
 
-                    double ControlPointRatio = (Math.Sqrt(2) - 1) * 4 / 3;
+                figure1.Segments.Add(new LineSegment(endPoint,true));
 
-                    var x0 = center.X - radius;
-                    var x1 = center.X - radius * ControlPointRatio;
-                    var x2 = center.X;
-                    var x3 = center.X + radius * ControlPointRatio;
-                    var x4 = center.X + radius;
+                var figure2 = new PathFigure
+                {
+                    StartPoint = center,
+                    IsClosed = false,
+                    IsFilled = false
+                };
 
-                    var y0 = center.Y - radius;
-                    var y1 = center.Y - radius * ControlPointRatio;
-                    var y2 = center.Y;
-                    var y3 = center.Y + radius * ControlPointRatio;
-                    var y4 = center.Y + radius;
+                figure2.Segments.Add(new LineSegment(ptwd, true));
 
-                    context.BeginFigure(new Point(x2, y0), true, true);
-                    //context.LineTo(endPoint, false, false);
-                    //context.LineTo(center, false, false);
-                    context.BezierTo(new Point(x3, y0), new Point(x4, y1), new Point(x4, y2), true, true);
-                    context.BezierTo(new Point(x4, y3), new Point(x3, y4), new Point(x2, y4), true, true);
-                    context.BezierTo(new Point(x1, y4), new Point(x0, y3), new Point(x0, y2), true, true);
-                    context.BezierTo(new Point(x0, y1), new Point(x1, y0), new Point(x2, y0), true, true);
+                figures.Add(figure);
+                figures.Add(figure1);
+                figures.Add(figure2);
 
-                    context.BeginFigure(center, true, true);
-                    context.LineTo(endPoint, false, false);
-
-                    context.BeginFigure(center, true, true);
-                    context.LineTo(ptwd, false, false);
-
-                }
-            }
-            else
-            {
-                geometry.Clear();
             }
         }
 
-        private static void LocationPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        protected void LocationPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
-            var mapMeas = (MapMeasureRange)obj;
-            mapMeas.UpdateData();
-            mapMeas.InvalidateVisual();
+            UpdateData();
         }
 
     }
@@ -2205,39 +2220,251 @@ namespace LionRiver
 
     }
 
-    public class WindArrow : MapPath
+    //public class WindArrow : MapShape
+    //{
+    //    private double Direction, Intensity, Scale;
+
+    //    public WindArrow()
+    //    {
+    //        this.Stroke = Brushes.LightGreen;
+    //        this.StrokeThickness = 2;
+    //        Direction = 0;
+    //        Intensity = 0;
+    //        Scale = .04;
+
+    //    }
+
+    //    //var geometry = (StreamGeometry)Data;
+    //    //var l = Location;
+
+    //    //if (ParentMap != null && l != null)
+    //    //{
+
+    //    //    var p1 = ParentMap.MapProjection.LocationToPoint(l);
+    //    //    var pcenter = new Point(p1.X, p1.Y + 3);
+
+    //    //    var p2 = new Point(pcenter.X, pcenter.Y + 3);
+    //    //    var p3 = new Point(p2.X - 3, p2.Y);
+
+    //    //    var p4 = new Point(pcenter.X, pcenter.Y + 2);
+    //    //    var p5 = new Point(pcenter.X - 1.5, p4.Y);
+    //    //    var p6 = new Point(p3.X, p4.Y);
+
+    //    //    var p7 = new Point(pcenter.X, pcenter.Y + 1);
+    //    //    var p8 = new Point(p5.X, p7.Y);
+    //    //    var p9 = new Point(p6.X, p7.Y);
+
+    //    //    var p10 = new Point(p8.X, pcenter.Y);
+    //    //    var p11 = new Point(p9.X, p10.Y);
+
+    //    //    using (var context = geometry.Open())
+    //    //    {
+
+    //    //        context.BeginFigure(p1, true, false);
+    //    //        context.LineTo(p2, true, false);
+
+
+    //    //        if (Intensity == 1 || Intensity > 2)
+    //    //        {
+    //    //            context.LineTo(p4, false, false);
+    //    //            context.LineTo(p5, true, false);
+    //    //        }
+
+    //    //        if (Intensity > 1)
+    //    //        {
+    //    //            context.LineTo(p2, false, false);
+    //    //            context.LineTo(p3, true, false);
+    //    //        }
+
+    //    //        if (Intensity > 3)
+    //    //        {
+    //    //            context.LineTo(p5, false, false);
+    //    //            context.LineTo(p6, true, false);
+    //    //        }
+
+    //    //        if (Intensity > 4)
+    //    //        {
+    //    //            context.LineTo(p7, false, false);
+    //    //            context.LineTo(p8, true, false);
+    //    //        }
+
+    //    //        if (Intensity > 5)
+    //    //        {
+    //    //            context.LineTo(p8, false, false);
+    //    //            context.LineTo(p9, true, false);
+    //    //        }
+
+    //    //        if (Intensity > 6)
+    //    //        {
+    //    //            context.LineTo(pcenter, false, false);
+    //    //            context.LineTo(p10, true, false);
+    //    //        }
+
+    //    //        if (Intensity > 7)
+    //    //        {
+    //    //            context.LineTo(p10, false, false);
+    //    //            context.LineTo(p11, true, false);
+    //    //        }
+    //    //    }
+
+    //    //    TransformGroup tg = new TransformGroup();
+    //    //    tg.Children.Add(new RotateTransform(Direction, p1.X, p1.Y));
+    //    //    tg.Children.Add(new ScaleTransform(Scale, Scale, p1.X, p1.Y));
+    //    //    geometry.Transform = tg;
+
+    //    //}
+    //    //else
+    //    //{
+    //    //    geometry.Clear();
+    //    //}
+
+    //    protected override void UpdateData()
+    //    {
+    //        var figures = ((PathGeometry)Data).Figures;
+    //        figures.Clear();
+
+    //        var l = Location;
+
+    //        if (ParentMap != null && l != null)
+    //        {
+    //            var p1 = LocationToPoint(l);
+    //            var pcenter = new Point(p1.X, p1.Y + 3000);
+
+    //            var p2 = new Point(pcenter.X, pcenter.Y + 3000);
+    //            var p3 = new Point(p2.X - 3, p2.Y);
+
+    //            var p4 = new Point(pcenter.X, pcenter.Y + 2);
+    //            var p5 = new Point(pcenter.X - 1.5, p4.Y);
+    //            var p6 = new Point(p3.X, p4.Y);
+
+    //            var p7 = new Point(pcenter.X, pcenter.Y + 1);
+    //            var p8 = new Point(p5.X, p7.Y);
+    //            var p9 = new Point(p6.X, p7.Y);
+
+    //            var p10 = new Point(p8.X, pcenter.Y);
+    //            var p11 = new Point(p9.X, p10.Y);
+
+    //            var figure = new PathFigure
+    //            {
+    //                StartPoint = p1,
+    //                IsClosed = false,
+    //                IsFilled = false
+    //            };
+
+    //            figure.Segments.Add(new LineSegment(p2, true));
+    //            figures.Add(figure);
+
+
+    //        }
+    //    }
+
+
+    //    protected void LocationPropertyChanged(DependencyPropertyChangedEventArgs e)
+    //    {
+    //        UpdateData();
+    //    }
+
+    //    public void Set(double dir, double tws, LinearGradientBrush lgbr)
+    //    {
+    //        Direction = -dir;
+    //        Intensity = Math.Truncate((tws + 2.5) / 5);
+    //        Color c = GetColor(tws / 30, lgbr);
+    //        SolidColorBrush br = new SolidColorBrush(c);
+    //        this.Stroke = br;
+    //        this.RenderTransform = new RotateTransform(Direction, this.Location.Latitude, this.Location.Longitude);
+
+    //        this.UpdateData();
+    //    }
+
+    //    public void SetScale(double sc)
+    //    {
+    //        this.Scale = sc;
+    //        this.UpdateData();
+    //        this.InvalidateVisual();
+    //    }
+
+    //    private Color GetColor(double x, LinearGradientBrush br)
+    //    {
+
+    //        //Clip the input if before or after the max/min offset values
+    //        double max = br.GradientStops.Max(n => n.Offset);
+    //        if (x > max)
+    //        {
+    //            x = max;
+    //        }
+    //        double min = br.GradientStops.Min(n => n.Offset);
+    //        if (x < min)
+    //        {
+    //            x = min;
+    //        }
+
+    //        //Find gradient stops that surround the input value
+    //        GradientStop gs0 = br.GradientStops.Where(n => n.Offset <= x).OrderBy(n => n.Offset).Last();
+    //        GradientStop gs1 = br.GradientStops.Where(n => n.Offset >= x).OrderBy(n => n.Offset).First();
+
+    //        float y = 0f;
+    //        if (gs0.Offset != gs1.Offset)
+    //        {
+    //            y = (float)((x - gs0.Offset) / (gs1.Offset - gs0.Offset));
+    //        }
+
+    //        //Interpolate color channels
+    //        Color cx = new Color();
+    //        if (br.ColorInterpolationMode == ColorInterpolationMode.ScRgbLinearInterpolation)
+    //        {
+    //            float aVal = (gs1.Color.ScA - gs0.Color.ScA) * y + gs0.Color.ScA;
+    //            float rVal = (gs1.Color.ScR - gs0.Color.ScR) * y + gs0.Color.ScR;
+    //            float gVal = (gs1.Color.ScG - gs0.Color.ScG) * y + gs0.Color.ScG;
+    //            float bVal = (gs1.Color.ScB - gs0.Color.ScB) * y + gs0.Color.ScB;
+    //            cx = Color.FromScRgb(aVal, rVal, gVal, bVal);
+    //        }
+    //        else
+    //        {
+    //            byte aVal = (byte)((gs1.Color.A - gs0.Color.A) * y + gs0.Color.A);
+    //            byte rVal = (byte)((gs1.Color.R - gs0.Color.R) * y + gs0.Color.R);
+    //            byte gVal = (byte)((gs1.Color.G - gs0.Color.G) * y + gs0.Color.G);
+    //            byte bVal = (byte)((gs1.Color.B - gs0.Color.B) * y + gs0.Color.B);
+    //            cx = Color.FromArgb(aVal, rVal, gVal, bVal);
+    //        }
+    //        return cx;
+    //    }
+
+    //}
+
+    public class WindArrow : System.Windows.Shapes.Shape
     {
-        private double Direction, Intensity, Scale;
-
-        public static readonly DependencyProperty LocationProperty = DependencyProperty.Register(
-            "Location", typeof(Location), typeof(WindArrow),
-            new PropertyMetadata(null, LocationPropertyChanged));
-
         public Location Location
         {
-            get { return (Location)GetValue(LocationProperty); }
-            set { SetValue(LocationProperty, value); }
+            get { return MapPanel.GetLocation(this); }
+            set { MapPanel.SetLocation(this, value); }
+        }
+        private double Direction, Intensity, Scale;
+
+        public Geometry Data;
+
+        protected override Geometry DefiningGeometry
+        {
+            get { return Data; }
         }
 
         public WindArrow()
         {
-            Data = new StreamGeometry();
-            this.Stroke = Brushes.LightGreen;
-            this.StrokeThickness = 2;
             Direction = 0;
             Intensity = 0;
-            Scale = .04;
+            Scale = .4;
+
+            Data = new StreamGeometry();
+
+            MapPanel.InitMapElement(this);
+
         }
 
-        protected override void UpdateData()
+        protected void UpdateData()
         {
             var geometry = (StreamGeometry)Data;
-            var l = Location;
+            geometry.Clear();
 
-            if (ParentMap != null && l != null)
-            {
-
-                var p1 = ParentMap.MapProjection.LocationToPoint(l);
+            var p1 = new Point(0, 0);
                 var pcenter = new Point(p1.X, p1.Y + 3);
 
                 var p2 = new Point(pcenter.X, pcenter.Y + 3);
@@ -2304,23 +2531,18 @@ namespace LionRiver
                     }
                 }
 
-                TransformGroup tg = new TransformGroup();
-                tg.Children.Add(new RotateTransform(Direction, p1.X, p1.Y));
-                tg.Children.Add(new ScaleTransform(Scale, Scale, p1.X, p1.Y));
-                geometry.Transform = tg;
+            TransformGroup tg = new TransformGroup();
+            tg.Children.Add(new RotateTransform(Direction, p1.X, p1.Y));
+            tg.Children.Add(new ScaleTransform(Scale, Scale, p1.X, p1.Y));
+            geometry.Transform = tg;
 
-            }
-            else
-            {
-                geometry.Clear();
-            }
+            Data = geometry;
+
         }
 
-        private static void LocationPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        protected void LocationPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
-            var wa = (WindArrow)obj;
-            wa.UpdateData();
-            wa.InvalidateVisual();
+            UpdateData();
         }
 
         public void Set(double dir, double tws, LinearGradientBrush lgbr)
@@ -2331,7 +2553,6 @@ namespace LionRiver
             SolidColorBrush br = new SolidColorBrush(c);
             this.Stroke = br;
             this.UpdateData();
-            //this.InvalidateVisual();
         }
 
         public void SetScale(double sc)
@@ -2389,13 +2610,13 @@ namespace LionRiver
 
     }
 
-    public class CurrentArrow : MapPath
+    public class CurrentArrow : MapShape
     {
         private double Direction, Intensity, Scale;
 
         public static readonly DependencyProperty LocationProperty = DependencyProperty.Register(
             "Location", typeof(Location), typeof(CurrentArrow),
-            new PropertyMetadata(null, LocationPropertyChanged));
+            new PropertyMetadata(null, (o, e) => ((CurrentArrow)o).LocationPropertyChanged(e)));
 
         public Location Location
         {
@@ -2403,52 +2624,39 @@ namespace LionRiver
             set { SetValue(LocationProperty, value); }
         }
 
-        public CurrentArrow()
-        {
-            Data = new StreamGeometry();
-            this.Stroke = Brushes.Green;
-            //this.Fill = Brushes.Green;
-            this.StrokeThickness = 2;
-            Direction = 0;
-            Intensity = 0;
-            Scale = .12;
-        }
-
         protected override void UpdateData()
         {
             var geometry = (StreamGeometry)Data;
-            var l = Location;
+            //var l = Location;
 
-            if (ParentMap != null && l != null)
-            {
+            //if (ParentMap != null && l != null)
+            //{
 
-                var p1 = ParentMap.MapProjection.LocationToPoint(l);
-                var p2 = new Point(p1.X , p1.Y + 9);
-                var p3 = new Point(p1.X +3, p1.Y + 9);
+            //    var p1 = ParentMap.MapProjection.LocationToPoint(l);
+            //    var p2 = new Point(p1.X , p1.Y + 9);
+            //    var p3 = new Point(p1.X +3, p1.Y + 9);
 
-                using (var context = geometry.Open())
-                {
-                    context.BeginFigure(p1, false, false);
-                    context.LineTo(p2, true, false);
-                    context.LineTo(p3, true, false);
+            //    using (var context = geometry.Open())
+            //    {
+            //        context.BeginFigure(p1, false, false);
+            //        context.LineTo(p2, true, false);
+            //        context.LineTo(p3, true, false);
 
-                    TransformGroup tg = new TransformGroup();
-                    tg.Children.Add(new RotateTransform(Direction, p1.X, p1.Y));
-                    tg.Children.Add(new ScaleTransform(Scale, Scale, p1.X, p1.Y));                    
-                    geometry.Transform = tg;
-                }
-            }
-            else
-            {
-                geometry.Clear();
-            }
+            //        TransformGroup tg = new TransformGroup();
+            //        tg.Children.Add(new RotateTransform(Direction, p1.X, p1.Y));
+            //        tg.Children.Add(new ScaleTransform(Scale, Scale, p1.X, p1.Y));
+            //        geometry.Transform = tg;
+            //    }
+            //}
+            //else
+            //{
+            //    geometry.Clear();
+            //}
         }
 
-        private static void LocationPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        protected void LocationPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
-            var ca = (CurrentArrow)obj;
-            ca.UpdateData();
-            ca.InvalidateVisual();
+            UpdateData();
         }
 
         public void Set(double dir, double cspd)
@@ -2471,13 +2679,13 @@ namespace LionRiver
 
     }
 
-    public class ColorDot : MapPath
+    public class ColorDot : MapShape
     {
         private double Intensity, Scale;
 
         public static readonly DependencyProperty LocationProperty = DependencyProperty.Register(
             "Location", typeof(Location), typeof(ColorDot),
-            new PropertyMetadata(null, LocationPropertyChanged));
+            new PropertyMetadata(null, (o, e) => ((ColorDot)o).LocationPropertyChanged(e)));
 
         public Location Location
         {
@@ -2485,52 +2693,43 @@ namespace LionRiver
             set { SetValue(LocationProperty, value); }
         }
 
-        public ColorDot()
-        {
-            Data = new StreamGeometry();
-            Intensity = 0;
-            Scale = .01;
-        }
-
         protected override void UpdateData()
         {
-            var geometry = (StreamGeometry)Data;
-            var l = Location;
+            //var geometry = (StreamGeometry)Data;
+            //var l = Location;
 
-            if (ParentMap != null && l != null)
-            {
+            //if (ParentMap != null && l != null)
+            //{
 
-                var pcenter = ParentMap.MapProjection.LocationToPoint(l);
+            //    var pcenter = ParentMap.MapProjection.LocationToPoint(l);
 
-                var p1 = new Point(pcenter.X + 1, pcenter.Y + 1);
-                var p2 = new Point(pcenter.X - 1, pcenter.Y + 1);
-                var p3 = new Point(pcenter.X - 1, pcenter.Y - 1);
-                var p4 = new Point(pcenter.X + 1, pcenter.Y - 1);
+            //    var p1 = new Point(pcenter.X + 1, pcenter.Y + 1);
+            //    var p2 = new Point(pcenter.X - 1, pcenter.Y + 1);
+            //    var p3 = new Point(pcenter.X - 1, pcenter.Y - 1);
+            //    var p4 = new Point(pcenter.X + 1, pcenter.Y - 1);
 
-                using (var context = geometry.Open())
-                {
+            //    using (var context = geometry.Open())
+            //    {
 
-                    context.BeginFigure(p1, true, true);
-                    context.LineTo(p2, false, false);
-                    context.LineTo(p3, false, false);
-                    context.LineTo(p4, false, false);
+            //        context.BeginFigure(p1, true, true);
+            //        context.LineTo(p2, false, false);
+            //        context.LineTo(p3, false, false);
+            //        context.LineTo(p4, false, false);
 
-                    TransformGroup tg = new TransformGroup();
-                    tg.Children.Add(new ScaleTransform(Scale, Scale, pcenter.X, pcenter.Y));                    
-                    geometry.Transform = tg;
-                }
-            }
-            else
-            {
-                geometry.Clear();
-            }
+            //        TransformGroup tg = new TransformGroup();
+            //        tg.Children.Add(new ScaleTransform(Scale, Scale, pcenter.X, pcenter.Y));                    
+            //        geometry.Transform = tg;
+            //    }
+            //}
+            //else
+            //{
+            //    geometry.Clear();
+            //}
         }
 
-        private static void LocationPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        protected void LocationPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
-            var wa = (ColorDot)obj;
-            wa.UpdateData();
-            wa.InvalidateVisual();
+            UpdateData();
         }
 
         public void SetColor(double it, LinearGradientBrush lgbr)

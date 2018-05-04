@@ -948,7 +948,7 @@ namespace LionRiver
                 && e.LeftButton == MouseButtonState.Pressed)
             {
                 var position = e.GetPosition(map);
-                map.TranslateMap(new Point(position.X - PanStartingPoint.X, position.Y - PanStartingPoint.Y));
+                map.TranslateMap(position - PanStartingPoint);
                 PanStartingPoint = position;
             }
 
@@ -1677,7 +1677,7 @@ namespace LionRiver
                 }
                 
                 map.Children.Remove(wagrid);
-                wagrid = new WindArrowGrid(wgrib,wgrib.DeltaLat*.1);
+                wagrid = new WindArrowGrid(wgrib,wgrib.DeltaLat*5);
                 map.Children.Add(wagrid);
               
                 maxGribTime = wgrib.band[wgrib.band.Count - 1].datetime;
